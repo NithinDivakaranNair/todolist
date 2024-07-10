@@ -9,19 +9,13 @@ import "./Todo.css";
 function Todo() {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
-  const [editID,setEditID]=useState(0)//editing propose
-  
-  //popup message 
-  const [popupMessage, setPopupMessage] = useState("");
-  const showAlert = () => {
-    alert(popupMessage);
-  };
-  //
+  const [editID, setEditID] = useState(0); //editing propose
+
 
   // direct dom manipulation
-  const inputRef = useRef(null);//corrected the ref name
+  const inputRef = useRef(null); //corrected the ref name
 
-// focucing  curser in text box
+  // focucing  curser in text box
   useEffect(() => {
     inputRef.current.focus();
   });
@@ -31,67 +25,42 @@ function Todo() {
     event.preventDefault();
   };
 
-  //add and edit todo
-  // const AddTodo=()=>{
-  //   if(todo!==''){
-  //     setTodos([...todos, { id: Date.now(), list: todo, status: false }]);
-  //     setTodo("");
-  //   }
-  //   if(editID){
-  //     const edittodo=todos.find((todo)=>todo.id==editID)
-  //     const updatetodo=todos.map((to)=>to.id==edittodo.id
-  //     ? (to={id:to.id,list:todo}): (to={id:to.id,list:to.list})
-  //     )
-  //     setTodos(updatetodo);
-  //     setEditID(0);
-  //     setTodo('');
-  //   }
-  //  }
-  const AddTodo=()=>{
-    if(todo!==''){
-      if(editID){
-        const updatetodo=todos.map((to)=>
-        to.id===editID ? ({...to,list:todo}): to
-        )
+ //add todo
+  const AddTodo = () => {
+    if (todo !== "") {
+      if (editID) {
+        const updatetodo = todos.map((to) =>
+          to.id === editID ? { ...to, list: todo } : to
+        );
         setTodos(updatetodo);
         setEditID(0);
-        
-      }else{
+      } else {
         setTodos([...todos, { id: Date.now(), list: todo, status: false }]);
-  
       }
       setTodo("");
-  
     }
-     
-     }
-
-
-  //TODO delete
-  const onDelete = (id,value) => {
-    setTodos(todos.filter((data) => data.id !== id));
-    //delete popup
-    setPopupMessage(`Task "${value}" is delete `);
-    showAlert();
   };
 
-  //TODO complete 
-  const onComplete = (id) => {
-    const completedTodos = todos.map((obj) =>
-    obj.id === id ? { ...obj, status: !obj.status } : obj
-     );
-    setTodos(completedTodos);
+  //TODO delete
+  const onDelete = (id, value) => {
+    setTodos(todos.filter((data) => data.id !== id));
    
   };
 
+  //TODO complete
+  const onComplete = (id) => {
+    const completedTodos = todos.map((obj) =>
+      obj.id === id ? { ...obj, status: !obj.status } : obj
+    );
+    setTodos(completedTodos);
+  };
+
   //TODO edit
-    const onEdit=(id)=>{
-    const editTodo=todos.find((obj)=>
-    obj.id===id
-     )
-   setEditID(editTodo.id)
-   setTodo(editTodo.list)
- }
+  const onEdit = (id) => {
+    const editTodo = todos.find((obj) => obj.id === id);
+    setEditID(editTodo.id);
+    setTodo(editTodo.list);
+  };
 
   return (
     <div className="container">
@@ -106,24 +75,22 @@ function Todo() {
           className="form-control"
           onChange={(event) => setTodo(event.target.value)}
         />
-        
-        <button onClick={AddTodo }>
-         {editID?'Edit':'Add'} 
-        </button>
-    
+
+        <button onClick={AddTodo}>{editID ? "Edit" : "Add"}</button>
       </form>
 
       <div className="list">
-
         <ul>
           {todos.map((obj) => (
             <li className="list-items" key={obj.id}>
-            <div className="list-item-list" id={obj.status ? "list-item" : " "} >
+              <div
+                className="list-item-list"
+                id={obj.status ? "list-item" : " "}
+              >
                 {obj.list}
               </div>
 
               <span>
-               
                 <IoCheckmarkDoneCircle
                   className="list-item-icons"
                   id="complete"
@@ -131,25 +98,23 @@ function Todo() {
                   onClick={() => onComplete(obj.id)}
                 />
 
-                <FaRegEdit 
-                className="list-item-icons" 
-                id="edit" title="Edit"
-                onClick={()=>onEdit(obj.id)}
-                 />
+                <FaRegEdit
+                  className="list-item-icons"
+                  id="edit"
+                  title="Edit"
+                  onClick={() => onEdit(obj.id)}
+                />
 
                 <MdDelete
                   className="list-item-icons"
                   id="delete"
                   title="Delete"
-                  onClick={() => onDelete(obj.id,obj.list)}
+                  onClick={() => onDelete(obj.id)}
                 />
-             
               </span>
-
             </li>
           ))}
         </ul>
-
       </div>
     </div>
   );
